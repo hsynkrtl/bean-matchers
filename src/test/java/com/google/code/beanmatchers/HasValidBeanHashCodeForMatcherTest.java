@@ -2,6 +2,8 @@ package com.google.code.beanmatchers;
 
 import com.google.code.beanmatchers.data.TestBeanWithOneProperty;
 import com.google.code.beanmatchers.data.TestBeanWithPropertyThatDoesNotInfluenceHashCode;
+import com.google.code.beanmatchers.data.TestBeanWithoutNoArgsConstructor;
+
 import org.hamcrest.Description;
 import org.mockito.Mock;
 import org.testng.annotations.BeforeMethod;
@@ -38,6 +40,19 @@ public class HasValidBeanHashCodeForMatcherTest {
         when(valueGeneratorMock.generate(Object.class)).thenReturn(valueOne, valueTwo, valueOne, valueTwo);
         when(descriptionMock.appendText(anyString())).thenReturn(descriptionMock);
         when(descriptionMock.appendValue(any())).thenReturn(descriptionMock);
+    }
+
+    @Test
+    public void beanWithoutNoArgsConstructorValidHashCodeShouldMatch() {
+        // given
+        TestBeanWithoutNoArgsConstructor bean = new TestBeanWithoutNoArgsConstructor(false);
+        unitUnderTest = new HasValidBeanHashCodeForMatcher(valueGeneratorMock, "field1");
+
+        // when
+        boolean match = unitUnderTest.matches(bean);
+
+        // then
+        assertThat(match, is(true));
     }
 
     @Test

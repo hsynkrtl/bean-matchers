@@ -1,6 +1,7 @@
 package com.google.code.beanmatchers;
 
 import com.google.code.beanmatchers.data.*;
+
 import org.hamcrest.Description;
 import org.mockito.Mock;
 import org.testng.annotations.BeforeMethod;
@@ -37,6 +38,19 @@ public class HasValidBeanEqualsExcludingMatcherTest {
         when(valueGeneratorMock.generate(Object.class)).thenReturn(valueOne, valueTwo, valueOne, valueTwo, valueOne, valueTwo);
         when(descriptionMock.appendText(anyString())).thenReturn(descriptionMock);
         when(descriptionMock.appendValue(any())).thenReturn(descriptionMock);
+    }
+
+    @Test
+    public void beanWithNoArgsConstructorValidEqualsShouldMatch() {
+        // given
+        TestBeanWithoutNoArgsConstructor bean = new TestBeanWithoutNoArgsConstructor(false);
+        unitUnderTest = new HasValidBeanEqualsExcludingMatcher(valueGeneratorMock);
+
+        // when
+        boolean match = unitUnderTest.matches(bean);
+
+        // then
+        assertThat(match, is(true));
     }
 
     @Test
