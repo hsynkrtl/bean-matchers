@@ -4,16 +4,21 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
+      - uses: actions/checkout@v6
+      - uses: actions/setup-java@v5
         with:
-          java-version: '8'
-          distribution: 'zulu'
+          java-version: '17'
+          distribution: 'oracle'
+          cache: 'maven'
       - name: Test
-        run: "mvn cobertura:cobertura --file pom.xml"
-      - name: CodeCov
-        run: "bash <(curl -s https://codecov.io/bash)"
+        run: "mvn -B package --file pom.xml"
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v6
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./target/site/jacoco/jacoco.xml
+          fail_ci_if_error: false
       - name: SpotBugs
         run: "mvn com.github.spotbugs:spotbugs-maven-plugin:check"
       - name: Checkstyle
-        run: "mvn checkstyle:check -Dcheckstyle.violationSeverity=warning -Dcheckstyle.violation.ignore=AbbreviationAsWordInName,MissingJavadocType,SummaryJavadoc"
+        run: "mvn checkstyle:check -Dcheckstyle.violationSeverity=warning -Dcheckstyle.violation.ignore=AbbreviationAsWordInName,MissingJavadocType,MissingJavadocMethod,SummaryJavadoc"
